@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import {useHistory} from 'react-router-dom';
+import QuestionItem from '../../components/Question/Question';
 
 import './users.css';
 
@@ -10,13 +11,13 @@ export default function Users() {
 
   const [refresh, setRefresh] = useState(0);
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newUserName, setNewUserName] = useState('');
+  // const [isModalOpen, setIsModalOpen] = useState(false);
+  // const [newUserName, setNewUserName] = useState('');
 
   const history = useHistory();
 
   useEffect(() => {
-    axios.get('https://demo-repo23.herokuapp.com/users/list')
+    axios.get('http://127.0.0.1:8000/tests/list')
       .then((response) => {
         if (response.data){
           setUsers(response.data);
@@ -28,21 +29,11 @@ export default function Users() {
       });
   }, [refresh])
 
-  const handleCreateUser = () => {
-    axios.post(`https://demo-repo23.herokuapp.com/users/create/${newUserName}`)
-      .then(() => {
-        setIsModalOpen(false);
-        setRefresh(refresh + 1);
-      })
-      .catch(error => {
-        setError(error);
-        console.log(error);
-      })
-  }
+  
 
   return (
     <div className="content">
-      {isModalOpen && 
+      {/* {isModalOpen && 
         <div className="create-modal">
           <input
             className="user-input"
@@ -55,10 +46,10 @@ export default function Users() {
             <button className="button" onClick={() => setIsModalOpen(false)}> Cancel </button>
           </div>
         </div>
-      }
+      } */}
   
       <div className="rooms-header">
-        <h1>Users</h1>
+        <h1>Tests</h1>
         <button
           onClick={() => history.push('/')}
           className="button"
@@ -73,15 +64,13 @@ export default function Users() {
         </div>
       )}
 
-      <div className="rooms-list">
-        {users ? users.map((user, index) => (
-          <div 
-            className="user-item"
-            key={`${user.userName}-${index}`}
-          >
-            <p>{user.userName}</p>
-            <p>{index}</p>
-          </div>
+      <div className="test-list">
+        {users ? users.map((question, index) => (
+          <QuestionItem
+          key={`${question.questionName}-${index}`}
+          name={question.equ}
+          direction={question.direction}
+        />
         )) : (
           <div className="rooms-empty">
             <p>Sorry there are no rooms right now... Come back later </p>
@@ -89,9 +78,9 @@ export default function Users() {
         )}
       </div>
 
-      <div>
+      {/* <div>
         <button className="page-button" onClick={() => setIsModalOpen(true)}> Add New User </button>
-      </div>
+      </div> */}
     </div>
   )
 }

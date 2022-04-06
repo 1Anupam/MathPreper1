@@ -1,9 +1,11 @@
-import React, {useEffect, useState} from 'react';
-import axios from 'axios';
-import {useHistory} from 'react-router-dom';
-import QuestionItem from '../../components/Question/Question';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useHistory } from "react-router-dom";
+import QuestionItem from "../../components/Question/Question";
+import mathImage from "../../imgs/math.jpeg";
 
-import './users.css';
+
+import "./users.css";
 
 export default function Users() {
   const [users, setUsers] = useState(undefined);
@@ -17,46 +19,47 @@ export default function Users() {
   const history = useHistory();
 
   useEffect(() => {
-    axios.get('http://127.0.0.1:8000/tests/list')
+    axios
+      .get("http://127.0.0.1:8000/tests/list")
       .then((response) => {
-        if (response.data){
+        if (response.data) {
           setUsers(response.data);
         }
       })
-      .catch(error => {
+      .catch((error) => {
         setError(error);
         console.log(error);
       });
-  }, [refresh])
-
-  
+  }, [refresh]);
 
   return (
     <div className="content">
-      {/* {isModalOpen && 
-        <div className="create-modal">
-          <input
-            className="user-input"
-            placeholder="User Name"
-            value={newUserName}
-            onChange={(e) => setNewUserName(e.target.value)}
-          />
-          <div className="create-actions">
-            <button className="button" onClick={handleCreateUser}>Create New User</button>
-            <button className="button" onClick={() => setIsModalOpen(false)}> Cancel </button>
-          </div>
+      <div>
+        <header className="header">
+          <h1>Test Questions</h1>
+          <button onClick={() => history.push("/")} className="button">
+            {"<--"}Go Back Home
+          </button>
+        </header>
+        <div className="main-image">
+          <img src={mathImage} alt="A table full of delicious food!" />
         </div>
-      } */}
-  
-      <div className="rooms-header">
-        <h1>Tests</h1>
-        <button
-          onClick={() => history.push('/')}
-          className="button"
-        >
-          {"<--"}Go Back Home
-        </button>
+        <main>
+          <section className="summary">
+            <h2>Ace Any Math Question</h2>
+            <p>
+              Add any question template to questions list. Later create specific
+              test questions from those templates.
+            </p>
+            <p>
+              MathPreper lets you create similar questions from your existing
+              questions, thus allowing you to master any question.
+            </p>
+          </section>
+        </main>
       </div>
+
+      
 
       {error && (
         <div className="rooms-error-box">
@@ -65,22 +68,22 @@ export default function Users() {
       )}
 
       <div className="test-list">
-        {users ? users.map((question, index) => (
-          <QuestionItem
-          key={`${question.questionName}-${index}`}
-          name={question.equ}
-          direction={question.direction}
-        />
-        )) : (
+        {users ? (
+          users.map((question, index) => (
+            <QuestionItem
+              key={`${question.questionName}-${index}`}
+              name={question.equ}
+              direction={question.direction}
+            />
+          ))
+        ) : (
           <div className="rooms-empty">
             <p>Sorry there are no rooms right now... Come back later </p>
           </div>
         )}
       </div>
 
-      {/* <div>
-        <button className="page-button" onClick={() => setIsModalOpen(true)}> Add New User </button>
-      </div> */}
+      
     </div>
-  )
+  );
 }

@@ -3,6 +3,7 @@ import axios from "axios";
 import { useHistory } from "react-router-dom";
 import mathImage from "../../imgs/math.jpeg";
 import QuestionItem from "../../components/Question/Question";
+import Card from '../../UI/Card';
 
 import "./questions.css";
 
@@ -179,23 +180,27 @@ export default function Questions() {
           <p>{error.toString()}</p>
         </div>
       )}
-
+      
       <div className="questions-list">
+        <Card>
         {questions ? (
           questions.map((question, index) => (
+            
             <QuestionItem
               key={`${question.questionName}-${index}`}
               name={question.equ}
               direction={question.direction}
+              rule = {question.rule}
             />
           ))
-        ) : (
+          ) : (
           <div className="questions-empty">
             <p>Sorry there are no questions right now... Come back later </p>
           </div>
         )}
+        </Card>
       </div>
-      <div>
+      <div className="buttons">
         <button className="page-button" onClick={() => setIsModalOpen(true)}>
           {" "}
           Add New Question{" "}
@@ -208,6 +213,7 @@ export default function Questions() {
       <div className="questions-list">
         {test ? (
           <div>
+            <Card>
             {test.map((question, index) => (
               <QuestionItem
                 key={`${question.questionName}-${index}`}
@@ -215,6 +221,8 @@ export default function Questions() {
                 direction={question.direction}
               />
             ))}
+            </Card>
+            <div className="buttonstest">
             <button className="page-button" onClick={postTest}>
               {" "}
               Save Test{" "}
@@ -223,11 +231,13 @@ export default function Questions() {
               {" "}
               Delete Test{" "}
             </button>
+            </div>
           </div>
         ) : (
           <div></div>
         )}
       </div>
+     
     </div>
   );
 }

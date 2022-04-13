@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
-import QuestionItem from "../../components/Question/Question";
 import mathImage from "../../imgs/math.jpeg";
+import QuestionItem from "../../components/Question/Question";
+import Card from '../../UI/Card';
 
+import "../Questions/questions.css";
 
-import "./users.css";
-
-export default function Users() {
-  const [users, setUsers] = useState(undefined);
+export default function Questions() {
+  const [questions, setQuestions] = useState(undefined);
   const [error, setError] = useState(undefined);
 
-  const [refresh, setRefresh] = useState(0);
+  const [refresh, setRefresh] = useState(undefined);
 
-  // const [isModalOpen, setIsModalOpen] = useState(false);
-  // const [newUserName, setNewUserName] = useState('');
+ 
 
   const history = useHistory();
 
@@ -22,15 +21,22 @@ export default function Users() {
     axios
       .get("http://127.0.0.1:8000/tests/list")
       .then((response) => {
+        console.log(response.data);
         if (response.data) {
-          setUsers(response.data);
+          setQuestions(response.data);
         }
       })
       .catch((error) => {
-        setError(error);
         console.log(error);
+        setError(error);
       });
   }, [refresh]);
+
+  
+
+  
+
+  
 
   return (
     <div className="content">
@@ -58,32 +64,42 @@ export default function Users() {
           </section>
         </main>
       </div>
+      
 
       
 
       {error && (
-        <div className="rooms-error-box">
+        <div className="questions-error-box">
           <p>{error.toString()}</p>
         </div>
       )}
-
-      <div className="test-list">
-        {users ? (
-          users.map((question, index) => (
+      
+      <div className="questions-list">
+        <Card>
+        {questions ? (
+          questions.map((question, index) => (
+            
             <QuestionItem
               key={`${question.questionName}-${index}`}
               name={question.equ}
               direction={question.direction}
+              rule = {question.rule}
             />
           ))
-        ) : (
-          <div className="rooms-empty">
-            <p>Sorry there are no rooms right now... Come back later </p>
+          ) : (
+          <div className="questions-empty">
+            <p>Sorry there are no questions right now... Come back later </p>
           </div>
         )}
+        </Card>
       </div>
-
-      
+      <div className="buttons">
+        
+      </div>
+      <div className="questions-list">
+        
+      </div>
+     
     </div>
   );
 }

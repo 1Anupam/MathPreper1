@@ -83,7 +83,7 @@ export default function Questions() {
               key={`${question.questionName}-${index}`}
               name={question.equ}
               direction={question.direction}
-              rule = {question.rule}
+              rule = {question.answer}
             />
           ))
           ) : (

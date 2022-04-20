@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { evaluate } from 'mathjs'
 import axios from "axios";
 import { useHistory } from "react-router-dom";
 import mathImage from "../../imgs/math.jpeg";
@@ -8,6 +9,7 @@ import Card from '../../UI/Card';
 import "./questions.css";
 
 export default function Questions() {
+
   const [questions, setQuestions] = useState(undefined);
   const [error, setError] = useState(undefined);
 
@@ -21,6 +23,7 @@ export default function Questions() {
     equ: "",
     direction: "",
     rule: "",
+    answer: "",
   });
 
   const history = useHistory();
@@ -63,21 +66,33 @@ export default function Questions() {
     setRefresh(refresh + 1);
   }
 
+  function parseQuestion(number) {
+    let problem = questions[number];
+    
+    let equation = problem.equ;
+    
+    let ans = problem.answer;
+    let variables = {};
+    problem.rule.split("|").forEach((str) => {
+      let [variable, value] = str.split("=");
+      variables[variable] = value;
+    })
+    
+    for(const property in variables) {
+      let integer = Math.floor(Math.random() * 100);
+      equation = equation.replaceAll(property, integer);
+      ans = ans.replaceAll(property, integer)
+    }
+    
+    return {
+      equ: equation,
+      direction: problem.direction,
+      answer: evaluate(ans),
+    };
+  }
+
   function handleCreateTest() {
-    let tquestions = testQuestions.split(",").map((number) => {
-      const question = questions[number];
-      let item = question.equ;
-      question.rule.split("|").forEach((str) => {
-        item = item.replaceAll(
-          str.split("=")[0],
-          Math.floor(Math.random() * 20)
-        );
-      });
-      return {
-        equ: item,
-        direction: question.direction,
-      };
-    });
+    let tquestions = testQuestions.split(",").map((number) => parseQuestion(number));
     console.log(tquestions);
     setIsModal2Open(false);
     setTest(tquestions);
@@ -138,6 +153,16 @@ export default function Questions() {
             onChange={(e) =>
               setNewQuestionName((state) => {
                 return { ...state, rule: e.target.value };
+              })
+            }
+          />
+          <input
+            className="question-input"
+            placeholder="Answer"
+            value={newQuestionName.answer}
+            onChange={(e) =>
+              setNewQuestionName((state) => {
+                return { ...state, answer: e.target.value };
               })
             }
           />
@@ -219,6 +244,7 @@ export default function Questions() {
                 key={`${question.questionName}-${index}`}
                 name={question.equ}
                 direction={question.direction}
+                rule={question.answer}
               />
             ))}
             </Card>

@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { evaluate } from 'mathjs'
+import { evaluate } from "mathjs";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
 import mathImage from "../../imgs/math.jpeg";
 import QuestionItem from "../../components/Question/Question";
-import Card from '../../UI/Card';
+import Card from "../../UI/Card";
+import TestItem from '../../UI/TestItem';
 
 import "./questions.css";
 
 export default function Questions() {
-
   const [questions, setQuestions] = useState(undefined);
   const [error, setError] = useState(undefined);
 
@@ -59,6 +59,7 @@ export default function Questions() {
 
   async function postTest() {
     console.log("printing new question", test);
+    console.log(test)
     test.forEach((question) =>
       axios.post(`http://127.0.0.1:8000/tests/create/`, question)
     );
@@ -68,22 +69,22 @@ export default function Questions() {
 
   function parseQuestion(number) {
     let problem = questions[number];
-    
+
     let equation = problem.equ;
-    
+
     let ans = problem.answer;
     let variables = {};
     problem.rule.split("|").forEach((str) => {
       let [variable, value] = str.split("=");
       variables[variable] = value;
-    })
-    
-    for(const property in variables) {
+    });
+
+    for (const property in variables) {
       let integer = Math.floor(Math.random() * 100);
       equation = equation.replaceAll(property, integer);
-      ans = ans.replaceAll(property, integer)
+      ans = ans.replaceAll(property, integer);
     }
-    
+
     return {
       equ: equation,
       direction: problem.direction,
@@ -92,7 +93,9 @@ export default function Questions() {
   }
 
   function handleCreateTest() {
-    let tquestions = testQuestions.split(",").map((number) => parseQuestion(number));
+    let tquestions = testQuestions
+      .split(",")
+      .map((number) => parseQuestion(number));
     console.log(tquestions);
     setIsModal2Open(false);
     setTest(tquestions);
@@ -205,24 +208,57 @@ export default function Questions() {
           <p>{error.toString()}</p>
         </div>
       )}
-      
+
+      <div className="questions-list">
+        {test ? (
+          <div>
+            <h3 className="test-header">Test</h3>
+            <Card>
+              {test.map((question, index) => (
+                <TestItem
+                  key={`${question.questionName}-${index}`}
+                  name={question.equ}
+                  direction={question.direction}
+                  rule={question.answer}
+                />
+              ))}
+            </Card>
+            <div className="buttonstest">
+              <button className="page-button" onClick={postTest}>
+                {" "}
+                Save Test{" "}
+              </button>
+              <button className="page-button" onClick={() => setTest(false)}>
+                {" "}
+                Delete Test{" "}
+              </button>
+              <button className="page-button" onClick={() => handleCreateTest(testQuestions)}>
+                {" "}
+                ReMake Test{" "}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div></div>
+        )}
+      </div>
+
       <div className="questions-list">
         <Card>
-        {questions ? (
-          questions.map((question, index) => (
-            
-            <QuestionItem
-              key={`${question.questionName}-${index}`}
-              name={question.equ}
-              direction={question.direction}
-              rule = {question.rule}
-            />
-          ))
+          {questions ? (
+            questions.map((question, index) => (
+              <QuestionItem
+                key={`${question.questionName}-${index}`}
+                name={question.equ}
+                direction={question.direction}
+                rule={question.rule}
+              />
+            ))
           ) : (
-          <div className="questions-empty">
-            <p>Sorry there are no questions right now... Come back later </p>
-          </div>
-        )}
+            <div className="questions-empty">
+              <p>Sorry there are no questions right now... Come back later </p>
+            </div>
+          )}
         </Card>
       </div>
       <div className="buttons">
@@ -235,35 +271,6 @@ export default function Questions() {
           Create Test{" "}
         </button>
       </div>
-      <div className="questions-list">
-        {test ? (
-          <div>
-            <Card>
-            {test.map((question, index) => (
-              <QuestionItem
-                key={`${question.questionName}-${index}`}
-                name={question.equ}
-                direction={question.direction}
-                rule={question.answer}
-              />
-            ))}
-            </Card>
-            <div className="buttonstest">
-            <button className="page-button" onClick={postTest}>
-              {" "}
-              Save Test{" "}
-            </button>
-            <button className="page-button" onClick={() => setTest(false)}>
-              {" "}
-              Delete Test{" "}
-            </button>
-            </div>
-          </div>
-        ) : (
-          <div></div>
-        )}
-      </div>
-     
     </div>
   );
 }

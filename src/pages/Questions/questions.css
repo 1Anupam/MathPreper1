@@ -2,7 +2,7 @@
   width: 100%;
   padding: 10px;
   border-radius: 5px;
-  background-color: #EF4444;
+  background-color: #ef4444;
 }
 
 .questions-header {
@@ -65,7 +65,7 @@
 .main-image {
   width: 100vw;
   height: 25rem;
-  
+
   overflow: hidden;
 }
 
@@ -99,13 +99,11 @@
   display: flex;
   width: 40rem;
   justify-content: space-between;
-  
-
-
-  
 }
 
+.test-header {
+  color:white;
+  text-align: center;
+  font-size: 30px;
 
-
-
-
+}

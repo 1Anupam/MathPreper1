@@ -4,6 +4,7 @@ import { useHistory } from "react-router-dom";
 import mathImage from "../../imgs/math.jpeg";
 import QuestionItem from "../../components/Question/Question";
 import Card from '../../UI/Card';
+import TestItem from '../../UI/TestItem';
 
 import "../Questions/questions.css";
 
@@ -79,7 +80,7 @@ export default function Questions() {
         {questions ? (
           questions.map((question, index) => (
             
-            <QuestionItem
+            <TestItem
               key={`${question.questionName}-${index}`}
               name={question.equ}
               direction={question.direction}

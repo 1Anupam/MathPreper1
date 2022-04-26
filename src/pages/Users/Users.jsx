@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
 import mathImage from "../../imgs/math.jpeg";
-import QuestionItem from "../../components/Question/Question";
+
 import Card from '../../UI/Card';
 import TestItem from '../../UI/TestItem';
 

@@ -93,6 +93,11 @@
 .summary h2 {
   font-size: 2rem;
   margin-top: 0;
+
+}
+.summary p {
+  margin-top: 10px;
+  
 }
 
 .buttons {

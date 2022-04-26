@@ -5,7 +5,7 @@ import { useHistory } from "react-router-dom";
 import mathImage from "../../imgs/math.jpeg";
 import QuestionItem from "../../components/Question/Question";
 import Card from "../../UI/Card";
-import TestItem from '../../UI/TestItem';
+import TestItem from "../../UI/TestItem";
 
 import "./questions.css";
 
@@ -59,7 +59,7 @@ export default function Questions() {
 
   async function postTest() {
     console.log("printing new question", test);
-    console.log(test)
+    console.log(test);
     test.forEach((question) =>
       axios.post(`http://127.0.0.1:8000/tests/create/`, question)
     );
@@ -120,6 +120,7 @@ export default function Questions() {
               Add any question template to questions list. Later create specific
               test questions from those templates.
             </p>
+
             <p>
               MathPreper lets you create similar questions from your existing
               questions, thus allowing you to master any question.
@@ -232,7 +233,10 @@ export default function Questions() {
                 {" "}
                 Delete Test{" "}
               </button>
-              <button className="page-button" onClick={() => handleCreateTest(testQuestions)}>
+              <button
+                className="page-button"
+                onClick={() => handleCreateTest(testQuestions)}
+              >
                 {" "}
                 ReMake Test{" "}
               </button>

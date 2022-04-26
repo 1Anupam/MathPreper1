@@ -14,10 +14,13 @@ export default function Question({ name, direction, rule }) {
       </div>
 
       <div className={classes.price}>
-          {!answerIsVisible && <button onClick={() => setAnswerIsVisible(true)}>Show Answer</button>}
-          {answerIsVisible && <button onClick={() => setAnswerIsVisible(false)}>Hide Answer</button>}
-        {answerIsVisible && rule}
+          {!answerIsVisible && <button className={classes.but} onClick={() => setAnswerIsVisible(true)}>Show Answer</button>}
+          {answerIsVisible && <button className={classes.but} onClick={() => setAnswerIsVisible(false)}>Hide Answer</button>}
+          
+          {answerIsVisible && rule}
+          
       </div>
+      
     </li>
   );
 }

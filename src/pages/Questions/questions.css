@@ -107,3 +107,9 @@
   font-size: 30px;
 
 }
+
+.buttonstest {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+}

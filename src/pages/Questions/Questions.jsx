@@ -30,7 +30,7 @@ export default function Questions() {
 
   useEffect(() => {
     axios
-      .get("http://127.0.0.1:8000/problems/list")
+      .get("https://mathpreper.herokuapp.com/problems/list")
       .then((response) => {
         console.log(response.data);
         if (response.data) {
@@ -46,7 +46,7 @@ export default function Questions() {
   async function handleCreateQuestion() {
     console.log("printing new question", newQuestionName);
     return axios
-      .post(`http://127.0.0.1:8000/problems/create/`, newQuestionName)
+      .post(`https://mathpreper.herokuapp.com/problems/create/`, newQuestionName)
       .then(() => {
         setIsModalOpen(false);
         setRefresh(refresh + 1);
@@ -61,7 +61,7 @@ export default function Questions() {
     console.log("printing new question", test);
     console.log(test);
     test.forEach((question) =>
-      axios.post(`http://127.0.0.1:8000/tests/create/`, question)
+      axios.post(`https://mathpreper.herokuapp.com/tests/create/`, question)
     );
     setTest(false);
     setRefresh(refresh + 1);

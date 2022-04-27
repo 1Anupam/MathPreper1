@@ -20,7 +20,7 @@ export default function Questions() {
 
   useEffect(() => {
     axios
-      .get("http://127.0.0.1:8000/tests/list")
+      .get("https://mathpreper.herokuapp.com/tests/list")
       .then((response) => {
         console.log(response.data);
         if (response.data) {

@@ -10,6 +10,7 @@ import TestItem from "../../UI/TestItem";
 import "./questions.css";
 
 export default function Questions() {
+  
   const [questions, setQuestions] = useState(undefined);
   const [error, setError] = useState(undefined);
 
@@ -68,12 +69,14 @@ export default function Questions() {
   }
 
   function parseQuestion(number) {
+    
     let problem = questions[number];
 
     let equation = problem.equ;
 
     let ans = problem.answer;
     let variables = {};
+    
     problem.rule.split("|").forEach((str) => {
       let [variable, value] = str.split("=");
       variables[variable] = value;
@@ -84,7 +87,7 @@ export default function Questions() {
       equation = equation.replaceAll(property, integer);
       ans = ans.replaceAll(property, integer);
     }
-
+    console.log("hello darkness 1", equation, evaluate(ans))
     return {
       equ: equation,
       direction: problem.direction,
@@ -93,6 +96,7 @@ export default function Questions() {
   }
 
   function handleCreateTest() {
+    console.log("hello darkness", testQuestions)
     let tquestions = testQuestions
       .split(",")
       .map((number) => parseQuestion(number));

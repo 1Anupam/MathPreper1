@@ -1,26 +1,30 @@
 import "./LoginForm.css";
 import { useState } from "react";
+import axios from "axios";
 
 const Form = ({ users, login }) => {
   const [info, setInfo] = useState({ userName: "", password: "" });
+  const [signingIn, setSigningIn] = useState(false);
   function loginHandler() {
-      let user = users.find(user => user.userName === info.userName && user.password === info.password);
-      if (user) {
-        login()
-      }
+    let user = users.find(
+      (user) =>
+        user.userName === info.userName && user.password === info.password
+    );
+    if (user) {
+      login();
+    }
+  }
+
+  function signInHandler() {
+    if (info.userName.length <= 1 || info.password.length <= 1) return;
+
+    axios.post(`https://mathpreper.herokuapp.com/users/create`, info);
+    login();
+      
   }
 
   return (
     <div className="form">
-      <form className="register-form">
-        <input type="text" placeholder="name" />
-        <input type="password" placeholder="password" />
-        <input type="text" placeholder="email address" />
-        <button>create</button>
-        <p className="message">
-          Already registered? Sign In
-        </p>
-      </form>
       <form className="login-form">
         <input
           type="text"
@@ -42,10 +46,22 @@ const Form = ({ users, login }) => {
             })
           }
         />
-        <button onClick={loginHandler}>login</button>
-        <p className="message">
-          Not registered? Create an account
-        </p>
+        {!signingIn && <button onClick={loginHandler}>login</button>}
+        {signingIn && <button onClick={signInHandler}>SignUp</button>}
+        {!signingIn && (
+          <p className="message">
+            Not registered?{" "}
+            <span onClick={() => setSigningIn(true)}>Create an account</span>
+          </p>
+        )}
+        {signingIn && (
+          <p className="message">
+            Already registered?{" "}
+            <span onClick={() => setSigningIn(false)}>
+              Login to your account
+            </span>
+          </p>
+        )}
       </form>
     </div>
   );

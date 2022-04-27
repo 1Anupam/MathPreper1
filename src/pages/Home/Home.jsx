@@ -7,10 +7,10 @@ import Login from "../../UI/LoginForm";
 
 import "../Questions/questions.css";
 
-export default function Questions() {
+export default function Home({login, loggedIn}) {
   const [users, setUsers] = useState(undefined);
   const [error, setError] = useState(undefined);
-  const [loggedIn, setLoggedIn] = useState(false);
+  
 
   const refresh = useState(undefined)[0];
 
@@ -67,7 +67,7 @@ export default function Questions() {
           <p>{error.toString()}</p>
         </div>
       )}
-      {!loggedIn && <Login users={users} login={() => setLoggedIn(true)} />}
+      {!loggedIn && <Login users={users} login={login} />}
       {loggedIn && (
         <div className="buttons">
           <button

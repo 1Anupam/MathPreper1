@@ -43,9 +43,10 @@
   color: #b3b3b3;
   font-size: 12px;
 }
-.form .message a {
+.form .message span {
   color: #4caf50;
-  text-decoration: none;
+  
+  text-decoration:underline;
 }
 .form .register-form {
   display: none;
@@ -95,4 +96,9 @@ body {
   font-family: "Roboto", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+span:hover {
+  cursor: pointer;
+
 }

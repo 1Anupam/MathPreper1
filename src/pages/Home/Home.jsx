@@ -12,7 +12,7 @@ export default function Questions() {
   const [error, setError] = useState(undefined);
   const [loggedIn, setLoggedIn] = useState(false);
 
-  const [refresh, setRefresh] = useState(undefined);
+  const refresh = useState(undefined)[0];
 
   const history = useHistory();
 

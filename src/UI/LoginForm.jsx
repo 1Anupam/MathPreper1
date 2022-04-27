@@ -4,7 +4,7 @@ import { useState } from "react";
 const Form = ({ users, login }) => {
   const [info, setInfo] = useState({ userName: "", password: "" });
   function loginHandler() {
-      let user = users.find(user => user.userName == info.userName && user.password == info.password);
+      let user = users.find(user => user.userName === info.userName && user.password === info.password);
       if (user) {
         login()
       }
@@ -18,7 +18,7 @@ const Form = ({ users, login }) => {
         <input type="text" placeholder="email address" />
         <button>create</button>
         <p className="message">
-          Already registered? <a href="#">Sign In</a>
+          Already registered? Sign In
         </p>
       </form>
       <form className="login-form">
@@ -44,7 +44,7 @@ const Form = ({ users, login }) => {
         />
         <button onClick={loginHandler}>login</button>
         <p className="message">
-          Not registered? <a href="#">Create an account</a>
+          Not registered? Create an account
         </p>
       </form>
     </div>

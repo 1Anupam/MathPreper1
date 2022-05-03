@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {  useEffect, useState } from "react";
 import { evaluate } from "mathjs";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
@@ -13,7 +13,7 @@ import "./questions.css";
 const initialState = {
   equ: "",
   direction: "",
-  rule: "",
+  rule: [""],
   answer: "",
 };
 
@@ -46,12 +46,14 @@ export default function Questions() {
       });
   }, [refresh]);
 
-  async function handleCreateQuestion() {
-    console.log("printing new question", newQuestionName);
+  async function handleCreateQuestion(data) {
+    console.log("posting", data);
+    
+    
     return axios
       .post(
         `https://mathpreper.herokuapp.com/problems/create/`,
-        newQuestionName
+        data
       )
       .then(() => {
         setIsModalOpen(false);
@@ -148,7 +150,7 @@ export default function Questions() {
           </label>
           <input
             id="equ"
-            className="question-input"
+            
             placeholder="Equation"
             value={newQuestionName.equ}
             onChange={(e) =>
@@ -164,7 +166,7 @@ export default function Questions() {
           </label>
           <input
             id="direction"
-            className="question-input"
+            
             placeholder="Direction"
             value={newQuestionName.direction}
             onChange={(e) =>
@@ -179,16 +181,51 @@ export default function Questions() {
             any variable from the equation and match it to what type it should
             be{" "}
           </label>
-          <input
-            className="question-input"
-            placeholder="Rule"
-            value={newQuestionName.rule}
-            onChange={(e) =>
-              setNewQuestionName((state) => {
-                return { ...state, rule: e.target.value };
-              })
-            }
-          />
+          <div >
+            {newQuestionName.rule.map((elem, ind) => {
+              
+              return (
+                <div key={ind}>
+                  <input
+                    className="mr-10"
+                    placeholder="Variable"
+                    value={newQuestionName.rule[ind].split("=")[0]}
+                    onChange={(e) =>
+                      setNewQuestionName((state) => {
+                        let rules = [...state.rule];
+                        rules.splice(ind, 1, `${e.target.value.trim()}=ints`);
+                        return { ...state, rule: rules };
+                      })
+                    }
+                  />
+                  :
+                  <select
+                    className="mr-10 ml-10"
+                    name="cars"
+                    onChange={(e) => {
+                      setNewQuestionName((state) => {
+                        let rules = [...state.rule];
+                        let elem = rules[ind].split("=")[0];
+                        if (!elem.length){
+                          return {...state}
+                        }
+                        rules.splice(ind, 1, `${elem}=${e.target.value}`);
+                        return { ...state, rule: rules };
+                      });
+                    }}
+                  >
+                    <option value="ints">Integers</option>
+                    <option value="floats">Floats</option>
+                  </select>
+                  <button className="var-button"  onClick={() => {
+                     setNewQuestionName((state) => {
+                      return { ...state, rule: [...state.rule, ''] };
+                    });
+                  }}>Add another variable</button>
+                </div>
+              );
+            })}
+          </div>
 
           <label for="Answer">
             The answer tells us how to solve the equation. Write out the
@@ -197,7 +234,7 @@ export default function Questions() {
           </label>
           <input
             id="Answer"
-            className="question-input"
+            
             placeholder="Answer"
             value={newQuestionName.answer}
             onChange={(e) =>
@@ -211,7 +248,12 @@ export default function Questions() {
             <button
               className="button"
               onClick={() => {
-                handleCreateQuestion();
+                let rules = [...newQuestionName.rule]
+                rules = rules.filter(elem => elem !== "");
+                rules = rules.join("|");
+                  
+                let data =  { ...newQuestionName, rule: rules };
+                handleCreateQuestion(data);
                 setNewQuestionName(initialState);
               }}
             >
@@ -234,7 +276,7 @@ export default function Questions() {
       {isModal2Open && (
         <Modal title="Enter the question numbers the generated test should have as comma separated values">
           <input
-            className="question-input"
+            
             placeholder="Questions"
             value={testQuestions}
             onChange={(e) => setTestQuestions(e.target.value)}

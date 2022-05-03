@@ -6,11 +6,18 @@ import mathImage from "../../imgs/math.jpeg";
 import QuestionItem from "../../components/Question/Question";
 import Card from "../../UI/Card";
 import TestItem from "../../UI/TestItem";
+import Modal from "../../UI/Modal";
 
 import "./questions.css";
 
+const initialState = {
+  equ: "",
+  direction: "",
+  rule: "",
+  answer: "",
+};
+
 export default function Questions() {
-  
   const [questions, setQuestions] = useState(undefined);
   const [error, setError] = useState(undefined);
 
@@ -20,12 +27,7 @@ export default function Questions() {
   const [isModal2Open, setIsModal2Open] = useState(false);
   const [test, setTest] = useState(false);
   const [testQuestions, setTestQuestions] = useState("");
-  const [newQuestionName, setNewQuestionName] = useState({
-    equ: "",
-    direction: "",
-    rule: "",
-    answer: "",
-  });
+  const [newQuestionName, setNewQuestionName] = useState(initialState);
 
   const history = useHistory();
 
@@ -47,7 +49,10 @@ export default function Questions() {
   async function handleCreateQuestion() {
     console.log("printing new question", newQuestionName);
     return axios
-      .post(`https://mathpreper.herokuapp.com/problems/create/`, newQuestionName)
+      .post(
+        `https://mathpreper.herokuapp.com/problems/create/`,
+        newQuestionName
+      )
       .then(() => {
         setIsModalOpen(false);
         setRefresh(refresh + 1);
@@ -69,14 +74,13 @@ export default function Questions() {
   }
 
   function parseQuestion(number) {
-    
     let problem = questions[number];
 
     let equation = problem.equ;
 
     let ans = problem.answer;
     let variables = {};
-    
+
     problem.rule.split("|").forEach((str) => {
       let [variable, value] = str.split("=");
       variables[variable] = value;
@@ -87,7 +91,7 @@ export default function Questions() {
       equation = equation.replaceAll(property, integer);
       ans = ans.replaceAll(property, integer);
     }
-    console.log("hello darkness 1", equation, evaluate(ans))
+    console.log("hello darkness 1", equation, evaluate(ans));
     return {
       equ: equation,
       direction: problem.direction,
@@ -96,10 +100,10 @@ export default function Questions() {
   }
 
   function handleCreateTest() {
-    console.log("hello darkness", testQuestions)
+    console.log("hello darkness", testQuestions);
     let tquestions = testQuestions
       .split(",")
-      .map((number) => parseQuestion(number));
+      .map((number) => parseQuestion(number.trim()));
     console.log(tquestions);
     setIsModal2Open(false);
     setTest(tquestions);
@@ -133,8 +137,17 @@ export default function Questions() {
         </main>
       </div>
       {isModalOpen && (
-        <div className="create-modal">
+        <Modal
+          title="Create new question template"
+          Cancel={() => setIsModalOpen(false)}
+        >
+          <label for="equ">
+            The equation has the main problem. It also includes the the
+            variables that will take on different values for each generated
+            question:{" "}
+          </label>
           <input
+            id="equ"
             className="question-input"
             placeholder="Equation"
             value={newQuestionName.equ}
@@ -144,7 +157,13 @@ export default function Questions() {
               })
             }
           />
+
+          <label for="direction">
+            The direction tells us what the question is asking. This part of the
+            question won't change for every generated question:{" "}
+          </label>
           <input
+            id="direction"
             className="question-input"
             placeholder="Direction"
             value={newQuestionName.direction}
@@ -154,6 +173,12 @@ export default function Questions() {
               })
             }
           />
+
+          <label for="Rule">
+            The rule tells us what is changing in each generated question. Pick
+            any variable from the equation and match it to what type it should
+            be{" "}
+          </label>
           <input
             className="question-input"
             placeholder="Rule"
@@ -164,7 +189,14 @@ export default function Questions() {
               })
             }
           />
+
+          <label for="Answer">
+            The answer tells us how to solve the equation. Write out the
+            expression(can include variables, numbers, mathmatical operators)
+            that gives us the solution to any generated question:{" "}
+          </label>
           <input
+            id="Answer"
             className="question-input"
             placeholder="Answer"
             value={newQuestionName.answer}
@@ -176,19 +208,31 @@ export default function Questions() {
           />
 
           <div className="create-actions">
-            <button className="button" onClick={handleCreateQuestion}>
+            <button
+              className="button"
+              onClick={() => {
+                handleCreateQuestion();
+                setNewQuestionName(initialState);
+              }}
+            >
               Create New Question
             </button>
-            <button className="button" onClick={() => setIsModalOpen(false)}>
+            <button
+              className="button"
+              onClick={() => {
+                setIsModalOpen(false);
+                setNewQuestionName(initialState);
+              }}
+            >
               {" "}
               Cancel{" "}
             </button>
           </div>
-        </div>
+        </Modal>
       )}
 
       {isModal2Open && (
-        <div className="create-modal">
+        <Modal title="Enter the question numbers the generated test should have as comma separated values">
           <input
             className="question-input"
             placeholder="Questions"
@@ -205,7 +249,7 @@ export default function Questions() {
               Cancel{" "}
             </button>
           </div>
-        </div>
+        </Modal>
       )}
 
       {error && (

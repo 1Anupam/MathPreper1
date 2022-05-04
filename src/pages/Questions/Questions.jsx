@@ -10,14 +10,17 @@ import Modal from "../../UI/Modal";
 
 import "./questions.css";
 
-const initialState = {
-  equ: "",
-  direction: "",
-  rule: [""],
-  answer: "",
-};
 
-export default function Questions() {
+
+export default function Questions({user}) {
+  const initialState = {
+    equ: "",
+    direction: "",
+    rule: [""],
+    answer: "",
+    user
+  };
+  console.log(initialState)
   const [questions, setQuestions] = useState(undefined);
   const [error, setError] = useState(undefined);
 
@@ -35,16 +38,18 @@ export default function Questions() {
     axios
       .get("https://mathpreper.herokuapp.com/problems/list")
       .then((response) => {
-        console.log(response.data);
+        
         if (response.data) {
-          setQuestions(response.data);
+          let data = response.data.filter(elem => elem.user === user);
+          
+          setQuestions(data);
         }
       })
       .catch((error) => {
         console.log(error);
         setError(error);
       });
-  }, [refresh]);
+  }, [refresh, user]);
 
   async function handleCreateQuestion(data) {
     console.log("posting", data);
@@ -89,15 +94,21 @@ export default function Questions() {
     });
 
     for (const property in variables) {
-      let integer = Math.floor(Math.random() * 100);
-      equation = equation.replaceAll(property, integer);
-      ans = ans.replaceAll(property, integer);
+      let num = Math.random() * 10000;
+      if (variables[property] === "ints") {
+        console.log(num);
+        num = Math.floor(num);
+      }
+      
+      equation = equation.replaceAll(property, num);
+      ans = ans.replaceAll(property, num);
     }
     console.log("hello darkness 1", equation, evaluate(ans));
     return {
       equ: equation,
       direction: problem.direction,
       answer: evaluate(ans),
+      user: problem.user
     };
   }
 
@@ -106,9 +117,10 @@ export default function Questions() {
     let tquestions = testQuestions
       .split(",")
       .map((number) => parseQuestion(number.trim()));
-    console.log(tquestions);
+    console.log("these", tquestions);
     setIsModal2Open(false);
     setTest(tquestions);
+    
   }
 
   return (

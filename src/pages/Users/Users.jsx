@@ -8,7 +8,8 @@ import TestItem from '../../UI/TestItem';
 
 import "../Questions/questions.css";
 
-export default function Questions() {
+export default function Questions({user}) {
+  console.log(user)
   const [questions, setQuestions] = useState(undefined);
   const [error, setError] = useState(undefined);
 
@@ -24,7 +25,8 @@ export default function Questions() {
       .then((response) => {
         console.log(response.data);
         if (response.data) {
-          setQuestions(response.data);
+          let data = response.data.filter(elem => elem.user === user);
+          setQuestions(data);
         }
       })
       .catch((error) => {

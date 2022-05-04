@@ -5,21 +5,24 @@ import axios from "axios";
 const Form = ({ users, login }) => {
   const [info, setInfo] = useState({ userName: "", password: "" });
   const [signingIn, setSigningIn] = useState(false);
-  function loginHandler() {
+  function loginHandler(e) {
+    e.preventDefault();
     let user = users.find(
       (user) =>
         user.userName === info.userName && user.password === info.password
     );
     if (user) {
-      login();
+      login(info.userName);
     }
   }
 
-  function signInHandler() {
+  function signInHandler(e) {
+    e.preventDefault();
+    
     if (info.userName.length <= 1 || info.password.length <= 1) return;
-
+    console.log("signing in", info)
     axios.post(`https://mathpreper.herokuapp.com/users/create`, info);
-    login();
+    login(info.userName);
       
   }
 

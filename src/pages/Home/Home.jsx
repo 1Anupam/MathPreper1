@@ -72,14 +72,14 @@ export default function Home({login, loggedIn}) {
         <div className="buttons">
           <button
             className="page-button"
-            onClick={() => navigateToPage("/rooms")}
+            onClick={() => navigateToPage("/questions")}
           >
             {" "}
             View All Questions{" "}
           </button>
           <button
             className="page-button"
-            onClick={() => navigateToPage("/users")}
+            onClick={() => navigateToPage("/test-questions")}
           >
             {" "}
             View All Test Questions{" "}

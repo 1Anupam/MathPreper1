@@ -27,10 +27,10 @@ function App() {
                 loggedIn={loggedIn.isLoggedIn}
               />
             </Route>
-            <Route exact={true} path={"/rooms"}>
+            <Route exact={true} path={"/questions"}>
               <Questions user={loggedIn.userName}/>
             </Route>
-            <Route exact={true} path={"/users"}>
+            <Route exact={true} path={"/test-questions"}>
               <Users user={loggedIn.userName}/>
             </Route>
           </Switch>

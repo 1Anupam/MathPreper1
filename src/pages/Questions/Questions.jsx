@@ -1,5 +1,5 @@
-import React, {  useEffect, useState } from "react";
-import { evaluate } from "mathjs";
+import React, { useEffect, useState } from "react";
+import { evaluate, parse } from "mathjs";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
 import mathImage from "../../imgs/math.jpeg";
@@ -10,27 +10,27 @@ import Modal from "../../UI/Modal";
 
 import "./questions.css";
 
-
-
-export default function Questions({user}) {
-  const initialState = {
-    equ: "",
-    direction: "",
-    rule: [""],
-    answer: "",
-    user
-  };
-  console.log(initialState)
+export default function Questions({ user }) {
   const [questions, setQuestions] = useState(undefined);
   const [error, setError] = useState(undefined);
-
   const [refresh, setRefresh] = useState(undefined);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModal2Open, setIsModal2Open] = useState(false);
   const [test, setTest] = useState(false);
   const [testQuestions, setTestQuestions] = useState("");
-  const [newQuestionName, setNewQuestionName] = useState(initialState);
+  const [newQuestionName, setNewQuestionName] = useState({
+    equ: "",
+    direction: "",
+    rule: [""],
+    answer: "",
+    user,
+  });
+  const [errors, setErrors] = useState({
+    equ: false,
+    direction: false,
+    rule: false,
+    answer: false,
+  });
 
   const history = useHistory();
 
@@ -38,10 +38,9 @@ export default function Questions({user}) {
     axios
       .get("https://mathpreper.herokuapp.com/problems/list")
       .then((response) => {
-        
         if (response.data) {
-          let data = response.data.filter(elem => elem.user === user);
-          
+          let data = response.data.filter((elem) => elem.user === user);
+
           setQuestions(data);
         }
       })
@@ -53,13 +52,9 @@ export default function Questions({user}) {
 
   async function handleCreateQuestion(data) {
     console.log("posting", data);
-    
-    
+
     return axios
-      .post(
-        `https://mathpreper.herokuapp.com/problems/create/`,
-        data
-      )
+      .post(`https://mathpreper.herokuapp.com/problems/create/`, data)
       .then(() => {
         setIsModalOpen(false);
         setRefresh(refresh + 1);
@@ -68,6 +63,7 @@ export default function Questions({user}) {
         setError(error);
         console.log(error);
       });
+      setTestQuestions("");
   }
 
   async function postTest() {
@@ -78,6 +74,27 @@ export default function Questions({user}) {
     );
     setTest(false);
     setRefresh(refresh + 1);
+  }
+
+  function refreshInputs() {
+    setErrors({
+      equ: false,
+      direction: false,
+      rule: false,
+      answer: false,
+    });
+    
+    setNewQuestionName({
+      equ: "",
+      direction: "",
+      rule: [""],
+      answer: "",
+      user,
+    });
+
+    setTestQuestions("");
+    setIsModalOpen(false);
+    setIsModal2Open(false);
   }
 
   function parseQuestion(number) {
@@ -99,16 +116,22 @@ export default function Questions({user}) {
         console.log(num);
         num = Math.floor(num);
       }
-      
+
       equation = equation.replaceAll(property, num);
       ans = ans.replaceAll(property, num);
     }
-    console.log("hello darkness 1", equation, evaluate(ans));
+    let finalAnswer = undefined;
+    try {
+      finalAnswer = evaluate(ans);
+    } catch (ex) {
+      finalAnswer = ans;
+    }
+
     return {
       equ: equation,
       direction: problem.direction,
-      answer: evaluate(ans),
-      user: problem.user
+      answer: finalAnswer,
+      user: problem.user,
     };
   }
 
@@ -116,11 +139,10 @@ export default function Questions({user}) {
     console.log("hello darkness", testQuestions);
     let tquestions = testQuestions
       .split(",")
-      .map((number) => parseQuestion(number.trim()));
+      .map((number) => parseQuestion(Number(number.trim())-1));
     console.log("these", tquestions);
     setIsModal2Open(false);
     setTest(tquestions);
-    
   }
 
   return (
@@ -153,62 +175,100 @@ export default function Questions({user}) {
       {isModalOpen && (
         <Modal
           title="Create new question template"
-          Cancel={() => setIsModalOpen(false)}
+          Cancel={refreshInputs}
         >
           <label for="equ">
             The equation has the main problem. It also includes the the
             variables that will take on different values for each generated
             question:{" "}
           </label>
-          <input
-            id="equ"
-            
-            placeholder="Equation"
-            value={newQuestionName.equ}
-            onChange={(e) =>
-              setNewQuestionName((state) => {
-                return { ...state, equ: e.target.value };
-              })
-            }
-          />
+          <div>
+            <input
+              id="equ"
+              placeholder="Equation"
+              value={newQuestionName.equ}
+              onChange={(e) => {
+                if (e.target.value.length < 1) {
+                  setErrors((state) => {
+                    return { ...state, equ: true };
+                  });
+                }
+                if (e.target.value.length === 1) {
+                  setErrors((state) => {
+                    return { ...state, equ: false };
+                  });
+                }
+                setNewQuestionName((state) => {
+                  return { ...state, equ: e.target.value };
+                });
+              }}
+            />
+            {errors.equ && <p className="error">Equation can't be empty</p>}
+          </div>
 
           <label for="direction">
             The direction tells us what the question is asking. This part of the
             question won't change for every generated question:{" "}
           </label>
-          <input
-            id="direction"
-            
-            placeholder="Direction"
-            value={newQuestionName.direction}
-            onChange={(e) =>
-              setNewQuestionName((state) => {
-                return { ...state, direction: e.target.value };
-              })
-            }
-          />
+
+          <div>
+            <input
+              id="direction"
+              placeholder="Direction"
+              value={newQuestionName.direction}
+              onChange={(e) => {
+                if (e.target.value.length < 1) {
+                  setErrors((state) => {
+                    return { ...state, direction: true };
+                  });
+                } else if (e.target.value.length === 1) {
+                  setErrors((state) => {
+                    return { ...state, direction: false };
+                  });
+                }
+
+                setNewQuestionName((state) => {
+                  return { ...state, direction: e.target.value };
+                });
+              }}
+            />
+            {errors.direction && (
+              <p className="error">Direction can't be empty</p>
+            )}
+          </div>
 
           <label for="Rule">
             The rule tells us what is changing in each generated question. Pick
             any variable from the equation and match it to what type it should
             be{" "}
           </label>
-          <div >
+          <div>
             {newQuestionName.rule.map((elem, ind) => {
-              
               return (
                 <div key={ind}>
                   <input
                     className="mr-10"
                     placeholder="Variable"
                     value={newQuestionName.rule[ind].split("=")[0]}
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      if (
+                        e.target.value.length < 1 ||
+                        !newQuestionName.equ.includes(e.target.value.trim())
+                      ) {
+                        setErrors((state) => {
+                          return { ...state, rule: true };
+                        });
+                      } else if (e.target.value.length === 1) {
+                        setErrors((state) => {
+                          return { ...state, rule: false };
+                        });
+                      }
                       setNewQuestionName((state) => {
                         let rules = [...state.rule];
                         rules.splice(ind, 1, `${e.target.value.trim()}=ints`);
                         return { ...state, rule: rules };
-                      })
-                    }
+                      });
+                    }}
                   />
                   :
                   <select
@@ -218,8 +278,8 @@ export default function Questions({user}) {
                       setNewQuestionName((state) => {
                         let rules = [...state.rule];
                         let elem = rules[ind].split("=")[0];
-                        if (!elem.length){
-                          return {...state}
+                        if (!elem.length) {
+                          return { ...state };
                         }
                         rules.splice(ind, 1, `${elem}=${e.target.value}`);
                         return { ...state, rule: rules };
@@ -229,14 +289,24 @@ export default function Questions({user}) {
                     <option value="ints">Integers</option>
                     <option value="floats">Floats</option>
                   </select>
-                  <button className="var-button"  onClick={() => {
-                     setNewQuestionName((state) => {
-                      return { ...state, rule: [...state.rule, ''] };
-                    });
-                  }}>Add another variable</button>
+                  <button
+                    className="var-button"
+                    onClick={() => {
+                      setNewQuestionName((state) => {
+                        return { ...state, rule: [...state.rule, ""] };
+                      });
+                    }}
+                  >
+                    Add another variable
+                  </button>
                 </div>
               );
             })}
+            {errors.rule && (
+              <div className="error">
+                Variables must be non-empty and part of the equation
+              </div>
+            )}
           </div>
 
           <label for="Answer">
@@ -244,39 +314,65 @@ export default function Questions({user}) {
             expression(can include variables, numbers, mathmatical operators)
             that gives us the solution to any generated question:{" "}
           </label>
-          <input
-            id="Answer"
-            
-            placeholder="Answer"
-            value={newQuestionName.answer}
-            onChange={(e) =>
-              setNewQuestionName((state) => {
-                return { ...state, answer: e.target.value };
-              })
-            }
-          />
+          <div>
+            <input
+              id="Answer"
+              placeholder="Answer"
+              value={newQuestionName.answer}
+              onChange={(e) => {
+                let valid = undefined;
+                try {
+                  parse(e.target.value.trim());
+                  valid = true;
+                } catch (ex) {
+                  valid = false;
+                }
+                setErrors((state) => {
+                  return { ...state, answer: !valid };
+                });
+                setNewQuestionName((state) => {
+                  return { ...state, answer: e.target.value };
+                });
+              }}
+            />
+            {errors.answer && (
+              <p className="error">
+                Answer must be a valid mathematical expression
+              </p>
+            )}
+          </div>
 
           <div className="create-actions">
             <button
               className="button"
               onClick={() => {
-                let rules = [...newQuestionName.rule]
-                rules = rules.filter(elem => elem !== "");
+                if (
+                  errors.equ ||
+                  errors.direction ||
+                  errors.answer ||
+                  errors.rule
+                )
+                  return;
+                let rules = [...newQuestionName.rule];
+                rules = rules.filter((elem) => elem !== "");
                 rules = rules.join("|");
-                  
-                let data =  { ...newQuestionName, rule: rules };
+
+                let data = { ...newQuestionName, rule: rules };
                 handleCreateQuestion(data);
-                setNewQuestionName(initialState);
+                setNewQuestionName({
+                  equ: "",
+                  direction: "",
+                  rule: [""],
+                  answer: "",
+                  user,
+                });
               }}
             >
               Create New Question
             </button>
             <button
               className="button"
-              onClick={() => {
-                setIsModalOpen(false);
-                setNewQuestionName(initialState);
-              }}
+              onClick={refreshInputs}
             >
               {" "}
               Cancel{" "}
@@ -286,19 +382,21 @@ export default function Questions({user}) {
       )}
 
       {isModal2Open && (
-        <Modal title="Enter the question numbers the generated test should have as comma separated values">
+        <Modal title="Enter the question numbers the generated test should have as comma separated values" Cancel={refreshInputs}>
           <input
-            
             placeholder="Questions"
             value={testQuestions}
-            onChange={(e) => setTestQuestions(e.target.value)}
+            onChange={(e) => {
+
+              setTestQuestions(e.target.value);
+            }}
           />
 
           <div className="create-actions">
             <button className="button" onClick={handleCreateTest}>
               Create Test
             </button>
-            <button className="button" onClick={() => setIsModal2Open(false)}>
+            <button className="button" onClick={refreshInputs}>
               {" "}
               Cancel{" "}
             </button>

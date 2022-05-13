@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 import Home from "./pages/Home/Home";
@@ -15,6 +15,7 @@ function App() {
   });
 
   return (
+
     <div className="root">
       <div>
         <Router>
@@ -36,7 +37,10 @@ function App() {
           </Switch>
         </Router>
       </div>
+
+     
     </div>
+    
   );
 }
 

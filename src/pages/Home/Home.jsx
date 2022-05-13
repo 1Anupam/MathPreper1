@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
 import mathImage from "../../imgs/math.jpeg";
+import Info from '../../UI/Info';
 
 import Login from "../../UI/LoginForm";
 
-import "../Questions/questions.css";
+// import "../Questions/questions.css";
 
 export default function Home({login, loggedIn}) {
   const [users, setUsers] = useState(undefined);
@@ -36,6 +37,8 @@ export default function Home({login, loggedIn}) {
   }, [refresh]);
 
   return (
+    <Fragment>
+
     <div className="content">
       <div>
         <header className="header">
@@ -86,6 +89,12 @@ export default function Home({login, loggedIn}) {
           </button>
         </div>
       )}
+
+      
+    
     </div>
+    {!loggedIn && <Info />}
+    
+    </Fragment>
   );
 }

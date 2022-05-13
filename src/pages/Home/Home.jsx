@@ -6,7 +6,6 @@ import Info from '../../UI/Info';
 
 import Login from "../../UI/LoginForm";
 
-// import "../Questions/questions.css";
 
 export default function Home({login, loggedIn}) {
   const [users, setUsers] = useState(undefined);

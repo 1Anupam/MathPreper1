@@ -21,7 +21,7 @@ export default function Questions({user}) {
 
   useEffect(() => {
     axios
-      .get("https://mathpreper.herokuapp.com/tests/list")
+      .get("https://mathpreper.onrender.com/api/tests")
       .then((response) => {
         console.log(response.data);
         if (response.data) {

@@ -11,6 +11,7 @@ import Modal from "../../UI/Modal";
 import "./questions.css";
 
 export default function Questions({ user }) {
+  console.log(user)
   const [questions, setQuestions] = useState(undefined);
   const [error, setError] = useState(undefined);
   const [refresh, setRefresh] = useState(undefined);
@@ -43,11 +44,11 @@ export default function Questions({ user }) {
 
   useEffect(() => {
     axios
-      .get("https://mathpreper.herokuapp.com/problems/list")
+      .get("https://mathpreper.onrender.com/api/problems")
       .then((response) => {
         if (response.data) {
           let data = response.data.filter((elem) => elem.user === user);
-          
+          console.log(data)
           setQuestions(data);
         }
       })
@@ -61,7 +62,7 @@ export default function Questions({ user }) {
     console.log("posting", data);
 
     axios
-      .post(`https://mathpreper.herokuapp.com/problems/create/`, data)
+      .post(`https://mathpreper.onrender.com/problems`, data)
       .then(() => {
         setIsModalOpen(false);
         setRefresh(state => !state);
@@ -77,7 +78,7 @@ export default function Questions({ user }) {
     console.log("printing new question", test);
     console.log(test);
     test.forEach((question) =>
-      axios.post(`https://mathpreper.herokuapp.com/tests/create/`, question)
+      axios.post(`https://mathpreper.onrender.com/tests`, question)
     );
     setTest(false);
     setRefresh(state => !state);
@@ -119,12 +120,12 @@ export default function Questions({ user }) {
     setErrors(obj);
   }
 
-  function DeleteQuestion(equ) {
+  function DeleteQuestion(id) {
     
-    console.log("deleting", equ);
+    console.log("deleting", id);
 
     return axios
-      .post(`https://mathpreper.herokuapp.com/problems/delete/${equ}`)
+      .delete(`https://mathpreper.onrender.com/api/delete/${id}`)
       .then(() => {
         
         setRefresh(state => !state);
@@ -156,7 +157,7 @@ export default function Questions({ user }) {
     for (const property in variables) {
       let num = Math.random() * 10000;
       if (variables[property] === "ints") {
-        console.log(num);
+        
         num = Math.floor(num);
       }
 
@@ -179,11 +180,10 @@ export default function Questions({ user }) {
   }
 
   function handleCreateTest() {
-    console.log("hello darkness", testQuestions);
     let tquestions = testQuestions
       .split(",")
       .map((number) => parseQuestion(Number(number.trim()) - 1));
-    console.log("these", tquestions);
+    
     setIsModal2Open(false);
     setTest(tquestions);
   }
@@ -513,7 +513,7 @@ export default function Questions({ user }) {
                 key={`${question.questionName}-${index}`}
                 name={question.equ}
                 direction={question.direction}
-                func={() => DeleteQuestion(question.equ)}
+                func={() => DeleteQuestion(question._id)}
                 
                 
               />

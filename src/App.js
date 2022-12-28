@@ -1,5 +1,10 @@
 import React, { Fragment } from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  Redirect,
+} from "react-router-dom";
 
 import Home from "./pages/Home/Home";
 import Questions from "./pages/Questions/Questions";
@@ -15,7 +20,6 @@ function App() {
   });
 
   return (
-
     <div className="root">
       <div>
         <Router>
@@ -29,18 +33,33 @@ function App() {
               />
             </Route>
             <Route exact={true} path={"/questions"}>
-              <Questions user={loggedIn.userName}/>
+              {loggedIn.isLoggedIn ? (
+                <Questions user={loggedIn.userName} />
+              ) : (
+                <Home
+                  login={(user) => {
+                    setLoggedIn({ isLoggedIn: true, userName: user });
+                  }}
+                  loggedIn={loggedIn.isLoggedIn}
+                />
+              )}
             </Route>
             <Route exact={true} path={"/test-questions"}>
-              <Users user={loggedIn.userName}/>
+              {loggedIn.isLoggedIn ? (
+                <Users user={loggedIn.userName} />
+              ) : (
+                <Home
+                  login={(user) => {
+                    setLoggedIn({ isLoggedIn: true, userName: user });
+                  }}
+                  loggedIn={loggedIn.isLoggedIn}
+                />
+              )}
             </Route>
           </Switch>
         </Router>
       </div>
-
-     
     </div>
-    
   );
 }
 

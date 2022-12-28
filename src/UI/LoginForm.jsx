@@ -21,7 +21,7 @@ const Form = ({ users, login }) => {
     
     if (info.userName.length <= 1 || info.password.length <= 1) return;
     console.log("signing in", info)
-    axios.post(`https://mathpreper.herokuapp.com/users/create`, info);
+    axios.post(`http://localhost:3000/users`, info);
     login(info.userName);
       
   }

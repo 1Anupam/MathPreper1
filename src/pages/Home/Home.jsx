@@ -22,7 +22,7 @@ export default function Home({login, loggedIn}) {
 
   useEffect(() => {
     axios
-      .get("https://mathpreper.herokuapp.com/users/list")
+      .get("https://mathpreper.onrender.com/api/users")
       .then((response) => {
         console.log(response.data);
         if (response.data) {

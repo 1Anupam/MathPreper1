@@ -18,12 +18,11 @@ const Form = ({ users, login }) => {
 
   function signInHandler(e) {
     e.preventDefault();
-    
+
     if (info.userName.length <= 1 || info.password.length <= 1) return;
-    console.log("signing in", info)
+    
     axios.post(`https://mathpreper.onrender.com/users`, info);
     login(info.userName);
-      
   }
 
   return (
@@ -55,7 +54,11 @@ const Form = ({ users, login }) => {
           <p className="message">
             Not registered?{" "}
             <span onClick={() => setSigningIn(true)}>Create an account</span>
+            <br />
+            Or{" "}
+            <span onClick={() => login('user1')}>Use test account</span>
           </p>
+          
         )}
         {signingIn && (
           <p className="message">

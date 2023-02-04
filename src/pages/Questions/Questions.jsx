@@ -11,7 +11,7 @@ import Modal from "../../UI/Modal";
 import "./questions.css";
 
 export default function Questions({ user }) {
-  console.log(user)
+  
   const [questions, setQuestions] = useState(undefined);
   const [error, setError] = useState(undefined);
   const [refresh, setRefresh] = useState(undefined);
@@ -48,18 +48,18 @@ export default function Questions({ user }) {
       .then((response) => {
         if (response.data) {
           let data = response.data.filter((elem) => elem.user === user);
-          console.log(data)
+          
           setQuestions(data);
         }
       })
       .catch((error) => {
-        console.log(error);
+        
         setError(error);
       });
   }, [refresh, user]);
 
   async function handleCreateQuestion(data) {
-    console.log("posting", data);
+    
 
     axios
       .post(`https://mathpreper.onrender.com/problems`, data)
@@ -69,14 +69,13 @@ export default function Questions({ user }) {
       })
       .catch((error) => {
         setError(error);
-        console.log(error);
+        
       });
     setTestQuestions("");
   }
 
   async function postTest() {
-    console.log("printing new question", test);
-    console.log(test);
+    
     test.forEach((question) =>
       axios.post(`https://mathpreper.onrender.com/tests`, question)
     );
@@ -122,7 +121,7 @@ export default function Questions({ user }) {
 
   function DeleteQuestion(id) {
     
-    console.log("deleting", id);
+    
 
     return axios
       .delete(`https://mathpreper.onrender.com/api/delete/${id}`)
@@ -132,7 +131,7 @@ export default function Questions({ user }) {
       })
       .catch((error) => {
         setError(error);
-        console.log(error);
+        
       });
     
 

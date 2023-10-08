@@ -18,8 +18,8 @@ const Form = ({ users, login }) => {
 
   function signInHandler(e) {
     e.preventDefault();
-
-    if (info.userName.length <= 1 || info.password.length <= 1) return;
+    console.log("hello world")
+    if (info.userName.length <= 1 || info.password.length < 1) return;
     
     axios.post(`https://mathpreper.onrender.com/users`, info);
     login(info.userName);

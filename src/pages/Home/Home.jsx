@@ -42,9 +42,6 @@ export default function Home({login, loggedIn}) {
       <div>
         <header className="header">
           <h1>MathPrepper</h1>
-          <button onClick={() => history.push("/")} className="button">
-            {"<--"}Go Back Home
-          </button>
         </header>
         <div className="main-image">
           <img src={mathImage} alt="A table full of delicious food!" />

@@ -9,7 +9,7 @@ import TestItem from '../../UI/TestItem';
 import "../Questions/questions.css";
 
 export default function Questions({user}) {
-  console.log(user)
+
   const [questions, setQuestions] = useState(undefined);
   const [error, setError] = useState(undefined);
 
@@ -23,14 +23,14 @@ export default function Questions({user}) {
     axios
       .get("https://mathpreper.onrender.com/api/tests")
       .then((response) => {
-        console.log(response.data);
+  
         if (response.data) {
           let data = response.data.filter(elem => elem.user === user);
           setQuestions(data);
         }
       })
       .catch((error) => {
-        console.log(error);
+
         setError(error);
       });
   }, [refresh]);

@@ -24,13 +24,13 @@ export default function Home({login, loggedIn}) {
     axios
       .get("https://mathpreper.onrender.com/api/users")
       .then((response) => {
-        console.log(response.data);
+        
         if (response.data) {
           setUsers(response.data);
         }
       })
       .catch((error) => {
-        console.log(error);
+
         setError(error);
       });
   }, [refresh]);

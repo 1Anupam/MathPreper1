@@ -60,7 +60,7 @@ export default function Questions({ user }) {
 
   async function handleCreateQuestion(data) {
     
-
+    console.log(data)
     axios
       .post(`https://mathpreper.onrender.com/problems`, data)
       .then(() => {
@@ -130,6 +130,7 @@ export default function Questions({ user }) {
         setRefresh(state => !state);
       })
       .catch((error) => {
+        
         setError(error);
         
       });
@@ -189,6 +190,7 @@ export default function Questions({ user }) {
 
   return (
     <div className="content">
+      
       <div>
         <header className="header">
           <h1>Questions</h1>
@@ -217,8 +219,7 @@ export default function Questions({ user }) {
       {isModalOpen && (
         <Modal title="Create new question template" Cancel={refreshInputs}>
           <label for="equ">
-            Part of the question that has the variables which will will take on different values for each generated
-            question:{" "}
+            Contains the variables for this question template. Each question generated from this template will each varible replace by a specific data type
           </label>
           <div>
             <input
@@ -247,43 +248,8 @@ export default function Questions({ user }) {
             {errors.equ && <p className="error">Equation can't be empty</p>}
           </div>
 
-          <label for="direction">
-            Part of the question that won't change for every generated question:{" "}
-          </label>
-
-          <div>
-            <input
-              id="direction"
-              placeholder="Direction"
-              value={newQuestionName.direction}
-              onChange={(e) => {
-                setTouched((state) => {
-                  return { ...state, direction: true };
-                });
-
-                if (e.target.value.length < 1) {
-                  setErrors((state) => {
-                    return { ...state, direction: true };
-                  });
-                } else if (e.target.value.length === 1) {
-                  setErrors((state) => {
-                    return { ...state, direction: false };
-                  });
-                }
-
-                setNewQuestionName((state) => {
-                  return { ...state, direction: e.target.value };
-                });
-              }}
-            />
-            {errors.direction && (
-              <p className="error">Direction can't be empty</p>
-            )}
-          </div>
-
           <label for="Rule">
-            What to replace each varible from the question template in each generated question. Pick
-            any variable from the equation and specify it's type.{" "}
+            Pick every variable from the equation and specify it's type.{" "}
           </label>
           <div>
             {newQuestionName.rule.map((elem, ind) => {
@@ -353,6 +319,40 @@ export default function Questions({ user }) {
               <div className="error">
                 Variables must be non-empty and part of the equation
               </div>
+            )}
+          </div>
+
+          <label for="direction">
+            Part of the question template that will be the same for every generated question. Doesn't include any variables{" "}
+          </label>
+
+          <div>
+            <input
+              id="direction"
+              placeholder="Direction"
+              value={newQuestionName.direction}
+              onChange={(e) => {
+                setTouched((state) => {
+                  return { ...state, direction: true };
+                });
+
+                if (e.target.value.length < 1) {
+                  setErrors((state) => {
+                    return { ...state, direction: true };
+                  });
+                } else if (e.target.value.length === 1) {
+                  setErrors((state) => {
+                    return { ...state, direction: false };
+                  });
+                }
+
+                setNewQuestionName((state) => {
+                  return { ...state, direction: e.target.value };
+                });
+              }}
+            />
+            {errors.direction && (
+              <p className="error">Direction can't be empty</p>
             )}
           </div>
 
@@ -433,6 +433,7 @@ export default function Questions({ user }) {
               Cancel{" "}
             </button>
           </div>
+
         </Modal>
       )}
 
@@ -534,6 +535,10 @@ export default function Questions({ user }) {
           Create Test{" "}
         </button>
       </div>
+      <br />
+      <br />
+      
+
     </div>
   );
 }

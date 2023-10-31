@@ -8,7 +8,7 @@ import Login from "../../UI/LoginForm";
 
 
 export default function Home({login, loggedIn}) {
-  const [users, setUsers] = useState(undefined);
+
   const [error, setError] = useState(undefined);
   
 
@@ -20,20 +20,7 @@ export default function Home({login, loggedIn}) {
     history.push(path);
   }
 
-  useEffect(() => {
-    axios
-      .get("https://mathpreper.onrender.com/api/users")
-      .then((response) => {
-        
-        if (response.data) {
-          setUsers(response.data);
-        }
-      })
-      .catch((error) => {
-
-        setError(error);
-      });
-  }, [refresh]);
+  
 
   return (
     <Fragment>
@@ -66,7 +53,7 @@ export default function Home({login, loggedIn}) {
           <p>{error.toString()}</p>
         </div>
       )}
-      {!loggedIn && <Login users={users} login={login} />}
+      {!loggedIn && <Login login={login} />}
       {loggedIn && (
         <div className="buttons">
           <button

@@ -2,18 +2,13 @@ import "./LoginForm.css";
 import { useState } from "react";
 import axios from "axios";
 
-const Form = ({ users, login }) => {
+const Form = ({ login }) => {
   const [info, setInfo] = useState({ userName: "", password: "" });
   const [signingIn, setSigningIn] = useState(false);
   function loginHandler(e) {
     e.preventDefault();
-    let user = users.find(
-      (user) =>
-        user.userName === info.userName && user.password === info.password
-    );
-    if (user) {
-      login(info.userName);
-    }
+    axios.post("https://mathpreper.onrender.com/api/checkUser", info).then((res) => login(info.userName)).catch(err => alert('Wrong credentials! Try loggin in again'));
+    
   }
 
   function signInHandler(e) {
